@@ -25,9 +25,14 @@ source-repository head
 
 library
   exposed-modules:
+      Constants
       EventHandler
+      GenRandom
       Graphics
       Lib
+      Types
+      Utils
+      Vectors
   other-modules:
       Paths_arcanoid
   autogen-modules:
@@ -38,6 +43,7 @@ library
   build-depends:
       base >=4.7 && <5
     , gloss
+    , random
   default-language: Haskell2010
 
 executable arcanoid-exe
@@ -53,6 +59,7 @@ executable arcanoid-exe
       arcanoid
     , base >=4.7 && <5
     , gloss
+    , random
   default-language: Haskell2010
 
 test-suite arcanoid-test
@@ -69,4 +76,5 @@ test-suite arcanoid-test
       arcanoid
     , base >=4.7 && <5
     , gloss
+    , random
   default-language: Haskell2010
