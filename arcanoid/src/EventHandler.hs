@@ -43,6 +43,7 @@ handleInputAlive (EventKey (SpecialKey KeySpace) Down _ _) scene
 handleInputAlive _ scene = scene
 
 handleInputDead :: Event -> Scene -> Scene
+handleInputDead (EventKey (Char 'r') Down _ _) scene = defaultScene $ sceneGen scene
 handleInputDead _ scene = sceneChangePlayerVelocity scene $ Velocity $ Vector2 0 0
 
 run :: IO ()

@@ -28,9 +28,10 @@ drawLoseScreen player (Score score)
     | health > 0 = []
     | otherwise =
     [
-        Color white $ polygon [(-200, -80), (-200, 80), (200, 80), (200, -80)],
-        Translate (-150) 20 $ Scale 0.4 0.4 $ Text "You've lost!",
-        Translate (-180) (-60) $ Scale 0.3 0.3 $ Text $ "Your score: " ++ (show score)
+        Color white $ polygon [(-200, -100), (-200, 100), (200, 100), (200, -100)],
+        Translate (-150) 40 $ Scale 0.4 0.4 $ Text "You've lost!",
+        Translate (-170) (-20) $ Scale 0.3 0.3 $ Text $ "Your score: " ++ (show score),
+        Translate (-170) (-80) $ Scale 0.25 0.25 $ Text "Press [r] to restart"
     ]
     where
         Health health = playerHealth player
