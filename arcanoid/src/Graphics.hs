@@ -3,19 +3,27 @@ module Graphics
     ) where
 
 import Graphics.Gloss.Interface.Pure.Game
+import Graphics.Gloss.Data.Bitmap (BitmapData)
 
 import Vectors
 import Types
 import Constants
     (scorePosition, scoreSize, healthPosition, healthSize)
 
-drawScene :: Scene -> Picture
-drawScene scene = Pictures $
-    (map drawAsteroid $ sceneAsteroids scene) ++
-    (map (drawBullet $ makeColorI 200 150 150 255) $ sceneEnemyBullets scene) ++
-    (map (drawBullet white) $ scenePlayerBullets scene) ++
-    (map drawEnemy $ sceneEnemies scene) ++
-    (drawPlayer $ player) ++
+drawScene :: [Picture] -> Scene -> Picture
+drawScene [playerImage
+    , playerDamagedImage
+    , playerDeadImage
+    , enemyImage
+    , playerBulletImage
+    , enemyBulletImage
+    , asteroidImage
+    ] scene = Pictures $
+    (map (drawAsteroid asteroidImage) $ sceneAsteroids scene) ++
+    (map (drawBullet (makeColorI 200 150 150 255) enemyBulletImage) $ sceneEnemyBullets scene) ++
+    (map (drawBullet white playerBulletImage) $ scenePlayerBullets scene) ++
+    (map (drawEnemy enemyImage) $ sceneEnemies scene) ++
+    (drawPlayer player playerImage playerDamagedImage playerDeadImage) ++
     [drawScore $ score,
     drawHealth $ playerHealth $ player] ++
     (drawLoseScreen player score)
@@ -36,34 +44,30 @@ drawLoseScreen player (Score score)
     where
         Health health = playerHealth player
 
-drawPlayer :: Player -> [Picture]
-drawPlayer player 
-    | health > 0 = [Translate x y $ (if invulnerableTime > 0 then (Color red) else (Color white))
-        $ polygon [(-30, -20), (0, 30), (30, -20)]]
-    | otherwise = map ((Color red) . (Translate x y)) [
-            polygon [(-35, -20), (-5, 30), (-5, -20)],
-            polygon [(35, -20), (5, 30), (5, -20)]
-        ]
+drawPlayer :: Player -> Picture -> Picture -> Picture -> [Picture]
+drawPlayer player playerImage playerDamagedImage playerDeadImage
+    | health > 0 = [Translate x y $ scale 5 5 $ (if invulnerableTime > 0 then playerDamagedImage else playerImage)]
+    | otherwise = map ((Translate x y) . (scale 5 5)) [playerDeadImage]
     where
         Health health = playerHealth player
         Time invulnerableTime = playerInvulnerableTime player
         Position (Vector2 x y) = playerPosition player
 
-drawAsteroid :: Asteroid -> Picture
-drawAsteroid asteroid = Translate x y $ Color (makeColorI 100 100 100 255) $ Rotate r $ polygon $
-    map (\(x_p, y_p) -> (x_p * x_size, y_p * x_size)) [(-1, -1), (-1, 1), (1, 1), (1, -1)]
+drawAsteroid :: Picture -> Asteroid -> Picture
+drawAsteroid asteroidImage asteroid = Translate x y $ Color (makeColorI 100 100 100 255) $ Rotate r $ scale
+    (0.07 * x_size) (0.07 * x_size) asteroidImage
     where
         Position (Vector2 x y) = asteroidPosition asteroid
         Rotation r = asteroidRotation asteroid
         Size (Vector2 x_size _) = boxColliderSize $ asteroidBoxCollider asteroid
 
-drawBullet :: Color -> Bullet -> Picture
-drawBullet bColor bullet = Translate x y $ Color bColor $ polygon [(-5, -10), (-5, 10), (5, 10), (5, -10)]
+drawBullet :: Color -> Picture -> Bullet -> Picture
+drawBullet bColor bulletPicture bullet = Translate x y $ Color bColor $ scale 4 4 $ bulletPicture
     where
         Position (Vector2 x y) = bulletPosition bullet
 
-drawEnemy :: Enemy -> Picture
-drawEnemy enemy = Translate x y $ Color (makeColorI 200 150 150 255) $ polygon [(-30, 20), (0, -30), (30, 20)]
+drawEnemy :: Picture -> Enemy -> Picture
+drawEnemy enemyImage enemy = Translate x y $ scale 5 5 enemyImage
     where
         Position (Vector2 x y) = enemyPosition enemy
 

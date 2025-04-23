@@ -21,7 +21,8 @@ genRandomPosition gen
 
 genRandomRotation :: StdGen -> (Rotation, StdGen)
 genRandomRotation gen = 
-    let (r, gen') = randomR (0, 2 * pi) gen
+    --let (r, gen') = randomR (0, 2 * pi) gen
+    let (r, gen') = randomR (0, 360) gen
     in (Rotation r, gen')
 
 genRandomFloat :: (Float, Float) -> StdGen -> (Float, StdGen)

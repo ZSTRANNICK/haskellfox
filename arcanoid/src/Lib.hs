@@ -189,9 +189,10 @@ updateEnemies time score enemies collisionList = killAndScore justEnemies enemyP
         justEnemies = unwrapFilterJust maybeEnemies
 
 updateBullet :: Time -> [(ID, ID)] -> Bullet -> Maybe Bullet
-updateBullet (Time dt) collisionList bullet | damage > 0 = Nothing
-                                            | position /= limitVector2 limitPosition_ld limitPosition_ru position = Nothing
-                                            | otherwise = Just Bullet {
+updateBullet (Time dt) collisionList bullet
+    | damage > 0 = Nothing
+    | vector2y position > vector2y limitPosition_ru || vector2y position < vector2y limitPosition_ld = Nothing
+    | otherwise = Just Bullet {
         bulletID = bulletID bullet,
         bulletPosition = newPosition,
         bulletVelocity = Velocity velocity,

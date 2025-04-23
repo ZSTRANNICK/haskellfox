@@ -3,6 +3,7 @@ module EventHandler
     ) where
 
 import Graphics.Gloss.Interface.Pure.Game
+import Graphics.Gloss.Data.Bitmap (loadBMP)
 import Graphics
 import System.Random(newStdGen)
 
@@ -49,5 +50,12 @@ handleInputDead _ scene = sceneChangePlayerVelocity scene $ Velocity $ Vector2 0
 run :: IO ()
 run = do
     gen <- newStdGen
-    play display bgColor steps (defaultScene gen) drawScene handleInput $ updateScene . Time
+    playerImage <- loadBMP "./Textures/Player.bmp"
+    playerDamagedImage <- loadBMP "./Textures/PlayerDamaged.bmp"
+    playerDeadImage <- loadBMP "./Textures/PlayerDead.bmp"
+    enemyImage <- loadBMP "./Textures/Enemy.bmp"
+    enemyPlayerImage <- loadBMP "./Textures/PlayerBullet.bmp"
+    enemyBulletImage <- loadBMP "./Textures/EnemyBullet.bmp"
+    asteroidImage <- loadBMP "./Textures/Asteroid.bmp"
+    play display bgColor steps (defaultScene gen) (drawScene [playerImage, playerDamagedImage, playerDeadImage, enemyImage, enemyPlayerImage, enemyBulletImage, asteroidImage]) handleInput $ updateScene . Time
         
